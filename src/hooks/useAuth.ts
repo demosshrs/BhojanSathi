@@ -1,54 +1,37 @@
-import { useState, useEffect } from 'react';
-import {
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut,
-  User,
-} from 'firebase/auth';
-import { doc, getDoc, setDoc } from 'firebase/firestore';
-import { auth, db } from '../config/firebase';
+import { useState } from 'react';
 import type { AppUser, UserRole } from '../types';
 
 interface AuthState {
-  user: User | null;
   appUser: AppUser | null;
   loading: boolean;
 }
 
 export function useAuth() {
-  const [state, setState] = useState<AuthState>({ user: null, appUser: null, loading: true });
+  const [state, setState] = useState<AuthState>({ appUser: null, loading: false });
 
-  useEffect(() => {
-    const unsub = onAuthStateChanged(auth, async (firebaseUser) => {
-      if (firebaseUser) {
-        const snap = await getDoc(doc(db, 'users', firebaseUser.uid));
-        setState({ user: firebaseUser, appUser: snap.data() as AppUser ?? null, loading: false });
-      } else {
-        setState({ user: null, appUser: null, loading: false });
-      }
-    });
-    return unsub;
-  }, []);
-
-  const signUp = async (email: string, password: string, name: string, role: UserRole) => {
-    const cred = await createUserWithEmailAndPassword(auth, email, password);
+  const signUp = async (email: string, _password: string, name: string, role: UserRole) => {
     const appUser: AppUser = {
-      id: cred.user.uid,
+      id: Math.random().toString(36).slice(2),
       name,
       email,
       role,
       createdAt: new Date().toISOString(),
     };
-    await setDoc(doc(db, 'users', cred.user.uid), appUser);
-    setState(s => ({ ...s, appUser }));
-    return cred;
+    setState({ appUser, loading: false });
   };
 
-  const signIn = (email: string, password: string) =>
-    signInWithEmailAndPassword(auth, email, password);
+  const signIn = async (email: string, _password: string) => {
+    const appUser: AppUser = {
+      id: 'mock-user',
+      name: email.split('@')[0],
+      email,
+      role: 'user',
+      createdAt: new Date().toISOString(),
+    };
+    setState({ appUser, loading: false });
+  };
 
-  const logout = () => signOut(auth);
+  const logout = () => setState({ appUser: null, loading: false });
 
-  return { ...state, signUp, signIn, logout };
+  return { ...state, user: state.appUser, signUp, signIn, logout };
 }
