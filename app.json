@@ -4,37 +4,12 @@
     "slug": "bhojansathi",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#1D9E75"
-    },
     "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.bhojansathi.app"
+      "supportsTablet": false
     },
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#1D9E75"
-      },
-      "package": "com.bhojansathi.app",
-      "minSdkVersion": 26
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-font",
-      [
-        "expo-image-picker",
-        {
-          "photosPermission": "BhojanSathi needs access to your photos to upload restaurant images."
-        }
-      ]
-    ],
-    "fonts": []
+      "package": "com.bhojansathi.app"
+    }
   }
 }
